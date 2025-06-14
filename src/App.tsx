@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import Editor from '@monaco-editor/react';
 
@@ -139,6 +139,49 @@ const ButtonContainer = styled.div`
   display: flex;
   gap: 1rem;
   padding: 0 2rem;
+`;
+
+const TemplateSelect = styled.select`
+  padding: 0.5rem 1rem;
+  background: #252526;
+  color: white;
+  border: 1px solid #3c3c3c;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #61dafb;
+  }
+
+  option {
+    background: #252526;
+  }
+`;
+
+const ShareButton = styled.button`
+  padding: 0.5rem 1rem;
+  background: linear-gradient(45deg, #61dafb, #764abc);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(97, 218, 251, 0.3);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
 `;
 
 const LayoutButton = styled.button`
@@ -394,6 +437,281 @@ const defaultJs = `document.querySelector('.btn').addEventListener('click', () =
   alert('Button clicked!');
 });`;
 
+interface Template {
+  name: string;
+  html: string;
+  css: string;
+  js: string;
+}
+
+const templates: Template[] = [
+  {
+    name: 'Basic Template',
+    html: defaultHtml,
+    css: defaultCss,
+    js: defaultJs
+  },
+  {
+    name: 'Counter App',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Counter App</title>
+</head>
+<body>
+  <div class="counter-container">
+    <h1>Counter App</h1>
+    <div class="counter">0</div>
+    <div class="buttons">
+      <button class="decrease">-</button>
+      <button class="reset">Reset</button>
+      <button class="increase">+</button>
+    </div>
+  </div>
+</body>
+</html>`,
+    css: `body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f0f2f5;
+}
+
+.counter-container {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.counter {
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  color: #333;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.increase {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.decrease {
+  background-color: #f44336;
+  color: white;
+}
+
+.reset {
+  background-color: #2196F3;
+  color: white;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}`,
+    js: `let count = 0;
+const counter = document.querySelector('.counter');
+const increaseBtn = document.querySelector('.increase');
+const decreaseBtn = document.querySelector('.decrease');
+const resetBtn = document.querySelector('.reset');
+
+function updateCounter() {
+  counter.textContent = count;
+}
+
+increaseBtn.addEventListener('click', () => {
+  count++;
+  updateCounter();
+});
+
+decreaseBtn.addEventListener('click', () => {
+  count--;
+  updateCounter();
+});
+
+resetBtn.addEventListener('click', () => {
+  count = 0;
+  updateCounter();
+});`
+  },
+  {
+    name: 'Todo List',
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Todo List</title>
+</head>
+<body>
+  <div class="todo-container">
+    <h1>Todo List</h1>
+    <div class="input-container">
+      <input type="text" placeholder="Add a new task...">
+      <button class="add-btn">Add</button>
+    </div>
+    <ul class="todo-list"></ul>
+  </div>
+</body>
+</html>`,
+    css: `body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background-color: #f0f2f5;
+}
+
+.todo-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.input-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.add-btn {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #45a049;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.todo-item.completed {
+  background-color: #e9ecef;
+  text-decoration: line-through;
+  color: #6c757d;
+}
+
+.todo-item input[type="checkbox"] {
+  margin-right: 0.75rem;
+}
+
+.delete-btn {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}`,
+    js: `const input = document.querySelector('input');
+const addBtn = document.querySelector('.add-btn');
+const todoList = document.querySelector('.todo-list');
+
+function createTodoItem(text) {
+  const li = document.createElement('li');
+  li.className = 'todo-item';
+  
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  
+  const span = document.createElement('span');
+  span.textContent = text;
+  
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-btn';
+  deleteBtn.textContent = 'Delete';
+  
+  li.appendChild(checkbox);
+  li.appendChild(span);
+  li.appendChild(deleteBtn);
+  
+  checkbox.addEventListener('change', () => {
+    li.classList.toggle('completed');
+  });
+  
+  deleteBtn.addEventListener('click', () => {
+    li.remove();
+  });
+  
+  return li;
+}
+
+addBtn.addEventListener('click', () => {
+  const text = input.value.trim();
+  if (text) {
+    todoList.appendChild(createTodoItem(text));
+    input.value = '';
+  }
+});
+
+input.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    addBtn.click();
+  }
+});`
+  }
+];
+
 function App() {
   const [html, setHtml] = useState(defaultHtml);
   const [css, setCss] = useState(defaultCss);
@@ -405,6 +723,52 @@ function App() {
   const [activeTab, setActiveTab] = useState<EditorType>('html');
   const [layout, setLayout] = useState<'side-by-side' | 'full-preview'>('side-by-side');
   const previewFrameRef = useRef<HTMLIFrameElement>(null);
+
+  // Load code from URL parameters on initial load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sharedHtml = params.get('html');
+    const sharedCss = params.get('css');
+    const sharedJs = params.get('js');
+
+    if (sharedHtml && sharedCss && sharedJs) {
+      setHtml(decodeURIComponent(sharedHtml));
+      setCss(decodeURIComponent(sharedCss));
+      setJs(decodeURIComponent(sharedJs));
+    }
+  }, []);
+
+  const handleTemplateChange = (templateName: string) => {
+    const template = templates.find(t => t.name === templateName);
+    if (template) {
+      setHtml(template.html);
+      setCss(template.css);
+      setJs(template.js);
+    }
+  };
+
+  const handleShare = () => {
+    const params = new URLSearchParams({
+      html: encodeURIComponent(html),
+      css: encodeURIComponent(css),
+      js: encodeURIComponent(js)
+    });
+    
+    // Use the deployed URL for sharing
+    const deployedUrl = 'https://yourusername.github.io/online-code-editor/';
+    const shareUrl = `${deployedUrl}?${params.toString()}`;
+    
+    // Create a temporary input element to copy the URL
+    const tempInput = document.createElement('input');
+    tempInput.value = shareUrl;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    
+    // Show a more informative message
+    alert('Share URL copied to clipboard! You can now share this URL with anyone, and they can open it on any device.');
+  };
 
   const getPreviewContent = () => {
     return `
@@ -517,6 +881,22 @@ function App() {
       <Header>
         <Title>Online Code Editor</Title>
         <ButtonContainer>
+          <TemplateSelect onChange={(e) => handleTemplateChange(e.target.value)}>
+            <option value="">Select Template</option>
+            {templates.map((template) => (
+              <option key={template.name} value={template.name}>
+                {template.name}
+              </option>
+            ))}
+          </TemplateSelect>
+          <ShareButton onClick={handleShare}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+              <polyline points="16 6 12 2 8 6" />
+              <line x1="12" y1="2" x2="12" y2="15" />
+            </svg>
+            Share
+          </ShareButton>
           <LayoutButton onClick={() => setLayout(layout === 'side-by-side' ? 'full-preview' : 'side-by-side')}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {layout === 'side-by-side' ? (
