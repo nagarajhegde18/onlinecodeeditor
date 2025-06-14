@@ -24,6 +24,11 @@ A responsive, browser-based IDE for HTML, CSS, and JavaScript built using React 
 
 ---
 
+Demo
+![Screenshot 2025-06-14 193149](https://github.com/user-attachments/assets/53b17651-edd2-49da-946c-61c795a7a245)
+
+![Screenshot 2025-06-14 193217](https://github.com/user-attachments/assets/8e8aa2bc-26a5-452b-b6f0-72430a912ce1)
+
 ##  Installation
 
 ```bash
@@ -39,10 +44,6 @@ npm start
 -Toggle between different layout modes (side-by-side, full preview).
 -Click "Reset" to clear the editors or load a starter template.
 
-Demo
-![Screenshot 2025-06-14 193149](https://github.com/user-attachments/assets/53b17651-edd2-49da-946c-61c795a7a245)
-
-![Screenshot 2025-06-14 193217](https://github.com/user-attachments/assets/8e8aa2bc-26a5-452b-b6f0-72430a912ce1)
 
 Created by Nagaraj Hegde – feel free to reach out!
 
